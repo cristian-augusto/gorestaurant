@@ -50,7 +50,24 @@ const Dashboard: React.FC = () => {
   async function handleUpdateFood(
     food: Omit<IFoodPlate, 'id' | 'available'>,
   ): Promise<void> {
-    // await api.put(`/foods/${food.}`, food);
+    Object.assign(food, {
+      id: editingFood.id,
+      available: editingFood.available,
+    });
+
+    const updatedFood = await api.put<IFoodPlate>(
+      `/foods/${editingFood.id}`,
+      food,
+    );
+
+    setFoods(
+      foods.map(f => {
+        if (f.id === editingFood.id) {
+          return updatedFood.data;
+        }
+        return f;
+      }),
+    );
   }
 
   async function handleDeleteFood(id: number): Promise<void> {
